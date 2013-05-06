@@ -256,7 +256,11 @@ static void sun4i_get_apb1_factors(u32 *freq, u32 parent_rate,
  * sunxi_factors_clk_setup() - Setup function for factor clocks
  */
 
+#define SUNXI_FACTORS_MUX_MASK 0x3
+
 struct factors_data {
+	int enable;
+	int mux;
 	struct clk_factors_config *table;
 	void (*getter) (u32 *rate, u32 parent_rate, u8 *n, u8 *k, u8 *m, u8 *p);
 };
@@ -307,16 +311,70 @@ static void __init sunxi_factors_clk_setup(struct device_node *node,
 					   struct factors_data *data)
 {
 	struct clk *clk;
+	struct clk_factors *factors;
+	struct clk_gate *gate;
+	struct clk_mux *mux;
+	struct clk_hw *gate_hw = NULL;
+	struct clk_hw *mux_hw = NULL;
 	const char *clk_name = node->name;
-	const char *parent;
+	const char *parents[5];
 	void *reg;
+	int i = 0;
 
 	reg = of_iomap(node, 0);
 
-	parent = of_clk_get_parent_name(node, 0);
+	/* if we have a mux, we will have >1 parents */
+	while (i < 5 && (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
+		i++;
 
-	clk = clk_register_factors(NULL, clk_name, parent, 0, reg,
-				   data->table, data->getter, &clk_lock);
+	factors = kzalloc(sizeof(struct clk_factors), GFP_KERNEL);
+	if (!factors)
+		return;
+
+	/* Add a gate if this factor clock can be gated */
+	if (data->enable) {
+		gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
+		if (!gate) {
+			kfree(factors);
+			return;
+		}
+
+		/* set up gate properties */
+		gate->reg = reg;
+		gate->bit_idx = data->enable;
+		gate->lock = &clk_lock;
+		gate_hw = &gate->hw;
+	}
+
+	/* Add a mux if this factor clock can be muxed */
+	if (data->mux) {
+		mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
+		if (!mux) {
+			kfree(factors);
+			kfree(gate);
+			return;
+		}
+
+		/* set up gate properties */
+		mux->reg = reg;
+		mux->shift = data->mux;
+		mux->mask = SUNXI_FACTORS_MUX_MASK;
+		mux->lock = &clk_lock;
+		mux_hw = &mux->hw;
+	}
+
+	/* set up factors properties */
+	factors->reg = reg;
+	factors->config = data->table;
+	factors->get_factors = data->getter;
+	factors->lock = &clk_lock;
+
+	clk = clk_register_composite(NULL, clk_name,
+			parents, i,
+			mux_hw, &clk_mux_ops,
+			&factors->hw, &clk_factors_ops,
+			gate_hw, &clk_gate_ops,
+			i ? 0 : CLK_IS_ROOT);
 
 	if (!IS_ERR(clk)) {
 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
