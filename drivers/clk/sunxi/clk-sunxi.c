@@ -623,6 +623,10 @@ static const struct gates_data sun47i_usb_gates_data __initconst = {
 	.mask = {0x1C0},
 };
 
+static const struct gates_data sun5i_usb_gates_data __initconst = {
+       .mask = {0x140},
+};
+
 static const struct gates_data sun5i_a10s_ahb_gates_data __initconst = {
 	.mask = {0x147667e7, 0x185915},
 };
@@ -874,6 +878,7 @@ static const struct of_device_id clk_gates_match[] __initconst = {
 	{.compatible = "allwinner,sun47i-usb-gates-clk", .data = &sun47i_usb_gates_data,},
 	{.compatible = "allwinner,sun5i-a10s-ahb-gates-clk", .data = &sun5i_a10s_ahb_gates_data,},
 	{.compatible = "allwinner,sun5i-a13-ahb-gates-clk", .data = &sun5i_a13_ahb_gates_data,},
+	{.compatible = "allwinner,sun5i-usb-gates-clk", .data = &sun5i_usb_gates_data,},
 	{.compatible = "allwinner,sun6i-a31-ahb1-gates-clk", .data = &sun6i_a31_ahb1_gates_data,},
 	{.compatible = "allwinner,sun7i-a20-ahb-gates-clk", .data = &sun7i_a20_ahb_gates_data,},
 	{.compatible = "allwinner,sun4i-apb0-gates-clk", .data = &sun4i_apb0_gates_data,},
