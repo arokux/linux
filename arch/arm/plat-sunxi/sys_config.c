@@ -972,9 +972,12 @@ __s32  gpio_set_one_pin_io_status(u32 p_handler, __u32 if_set_to_output_status,
 	port_num_func = port_num >> 3;
 
 	tmp_group_func_addr = PIO_REG_CFG(port, port_num_func);
+	printk("tmp_group_pull_addr = 0x%x\n", tmp_group_func_addr);
 	reg_val = *tmp_group_func_addr;
+	printk("regval before = 0x%x\n", reg_val);
 	reg_val &= ~(0x07 << (((port_num - (port_num_func<<3))<<2)));
 	reg_val |=   if_set_to_output_status << (((port_num - (port_num_func<<3))<<2));
+	printk("regval after = 0x%x\n", reg_val);
 	*tmp_group_func_addr = reg_val;
 
 	return EGPIO_SUCCESS;
@@ -1031,9 +1034,12 @@ __s32  gpio_set_one_pin_pull(u32 p_handler, __u32 set_pull_status,
 	port_num_pull = port_num >> 4;
 
 	tmp_group_pull_addr = PIO_REG_PULL(port, port_num_pull);
+	printk("tmp_group_pull_addr = 0x%x\n", tmp_group_pull_addr);
 	reg_val = *tmp_group_pull_addr;
+	printk("regval before = 0x%x\n", reg_val);
 	reg_val &= ~(0x03 << (((port_num - (port_num_pull<<4))<<1)));
 	reg_val |=  (set_pull_status << (((port_num - (port_num_pull<<4))<<1)));
+	printk("regval after = 0x%x\n", reg_val);
 	*tmp_group_pull_addr = reg_val;
 
 	return EGPIO_SUCCESS;
@@ -1217,9 +1223,12 @@ __s32  gpio_write_one_pin_value(u32 p_handler, __u32 value_to_gpio,
 	func_val = (reg_val >> ((port_num - (port_num_func<<3))<<2)) & 0x07;
 	if (func_val == 1) {
 		tmp_group_data_addr = PIO_REG_DATA(port);
+		printk("tmp_group_pull_addr = 0x%x\n", tmp_group_data_addr);
 		reg_val = *tmp_group_data_addr;
+		printk("regval before = 0x%x\n", reg_val);
 		reg_val &= ~(1 << port_num);
 		reg_val |=  (value_to_gpio << port_num);
+		printk("regval after = 0x%x\n", reg_val);
 		*tmp_group_data_addr = reg_val;
 
 		return EGPIO_SUCCESS;

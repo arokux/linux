@@ -432,10 +432,14 @@ static u32 alloc_pin(user_gpio_set_t *gpio_list)
 	}
 
 	/* set config, ouput */
+	printk("hci io status start\n");
 	gpio_set_one_pin_io_status(pin_handle, 1, NULL);
+	printk("hci io status end\n");
 
 	/* reserved is pull down */
+	printk("hci pull start\n");
 	gpio_set_one_pin_pull(pin_handle, 2, NULL);
+	printk("hci pull end\n");
 
 	return pin_handle;
 }
@@ -464,7 +468,9 @@ static void __sw_set_vbus(struct sw_hci_hcd *sw_hci, int is_on)
 	else
 		on_off = is_on ? 0 : 1;
 
+	printk("hci gpio_write_one_pin_value start\n");
 	gpio_write_one_pin_value(sw_hci->drv_vbus_Handle, on_off, NULL);
+	printk("hci gpio_write_one_pin_value end\n");
 
 	return;
 }
