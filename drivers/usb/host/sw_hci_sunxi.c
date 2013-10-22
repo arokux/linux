@@ -680,41 +680,23 @@ EXPORT_SYMBOL_GPL(sunxi_hcd_unmap_urb_for_dma);
 #define  SW_EHCI_NAME		"sw-ehci"
 static const char ehci_name[] = SW_EHCI_NAME;
 
+static struct sw_hci_hcd sw_ehci0;
 static struct sw_hci_hcd sw_ehci1;
 static struct sw_hci_hcd sw_ehci2;
 
 static u64 sw_ehci_dmamask = DMA_BIT_MASK(32);
 
-static struct resource sw_ehci1_resources[] = {
-	[0] = {
-		.start = SW_PA_USB1_IO_BASE + SW_USB_EHCI_BASE_OFFSET,
-		.end = SW_PA_USB1_IO_BASE + SW_USB_EHCI_BASE_OFFSET +
-		       (SW_USB_EHCI_LEN - 1),
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = SW_INT_SRC_EHCI0,
-		.end = SW_INT_SRC_EHCI0,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-
-static struct resource sw_ehci2_resources[] = {
-	[0] = {
-		.start = SW_PA_USB2_IO_BASE + SW_USB_EHCI_BASE_OFFSET,
-		.end = SW_PA_USB2_IO_BASE + SW_USB_EHCI_BASE_OFFSET +
-		       (SW_USB_EHCI_LEN - 1),
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = SW_INT_SRC_EHCI1,
-		.end = SW_INT_SRC_EHCI1,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-
 static struct platform_device sw_usb_ehci_device[] = {
-	[0] = { /* TODO: remove */ },
+	[0] = {
+	       .name = ehci_name,
+	       .id = 0,
+	       .dev = {
+		       .dma_mask = &sw_ehci_dmamask,
+		       .coherent_dma_mask = DMA_BIT_MASK(32),
+		       .platform_data = &sw_ehci0,
+		       },
+	       },
+
 	[1] = {
 	       .name = ehci_name,
 	       .id = 1,
@@ -723,8 +705,6 @@ static struct platform_device sw_usb_ehci_device[] = {
 		       .coherent_dma_mask = DMA_BIT_MASK(32),
 		       .platform_data = &sw_ehci1,
 		       },
-	       .resource = sw_ehci1_resources,
-	       .num_resources = ARRAY_SIZE(sw_ehci1_resources),
 	       },
 
 	[2] = {
@@ -735,8 +715,6 @@ static struct platform_device sw_usb_ehci_device[] = {
 		       .coherent_dma_mask = DMA_BIT_MASK(32),
 		       .platform_data = &sw_ehci2,
 		       },
-	       .resource = sw_ehci2_resources,
-	       .num_resources = ARRAY_SIZE(sw_ehci2_resources),
 	       },
 };
 
