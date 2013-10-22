@@ -363,9 +363,10 @@ static int close_clock(struct sw_hci_hcd *sw_hci, u32 ohci)
 static void usb_passby(struct sw_hci_hcd *sw_hci, u32 enable)
 {
 	unsigned long reg_value = 0;
-	static DEFINE_SPINLOCK(lock);
+	spinlock_t lock;
 	unsigned long flags = 0;
 
+	spin_lock_init(&lock);
 	spin_lock_irqsave(&lock, flags);
 
 	/*enable passby */
