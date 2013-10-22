@@ -727,41 +727,23 @@ static struct platform_device sw_usb_ehci_device[] = {
 #define  SW_OHCI_NAME		"sw-ohci"
 static const char ohci_name[] = SW_OHCI_NAME;
 
+static struct sw_hci_hcd sw_ohci0;
 static struct sw_hci_hcd sw_ohci1;
 static struct sw_hci_hcd sw_ohci2;
 
 static u64 sw_ohci_dmamask = DMA_BIT_MASK(32);
 
-static struct resource sw_ohci1_resources[] = {
-	[0] = {
-		.start = SW_PA_USB1_IO_BASE + SW_USB_OHCI_BASE_OFFSET,
-		.end = SW_PA_USB1_IO_BASE + SW_USB_OHCI_BASE_OFFSET +
-		       (SW_USB_OHCI_LEN - 1),
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = SW_INT_SRC_OHCI0,
-		.end = SW_INT_SRC_OHCI0,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-
-static struct resource sw_ohci2_resources[] = {
-	[0] = {
-		.start = SW_PA_USB2_IO_BASE + SW_USB_OHCI_BASE_OFFSET,
-		.end = SW_PA_USB2_IO_BASE + SW_USB_OHCI_BASE_OFFSET +
-		       (SW_USB_OHCI_LEN - 1),
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = SW_INT_SRC_OHCI1,
-		.end = SW_INT_SRC_OHCI1,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-
 static struct platform_device sw_usb_ohci_device[] = {
-	[0] = { /* TODO: remove */ },
+	[0] = {
+	       .name = ohci_name,
+	       .id = 0,
+	       .dev = {
+		       .dma_mask = &sw_ohci_dmamask,
+		       .coherent_dma_mask = DMA_BIT_MASK(32),
+		       .platform_data = &sw_ohci0,
+		       },
+	       },
+
 	[1] = {
 	       .name = ohci_name,
 	       .id = 1,
@@ -770,9 +752,8 @@ static struct platform_device sw_usb_ohci_device[] = {
 		       .coherent_dma_mask = DMA_BIT_MASK(32),
 		       .platform_data = &sw_ohci1,
 		       },
-	       .resource = sw_ohci1_resources,
-	       .num_resources = ARRAY_SIZE(sw_ohci1_resources),
 	       },
+
 	[2] = {
 	       .name = ohci_name,
 	       .id = 2,
@@ -781,8 +762,6 @@ static struct platform_device sw_usb_ohci_device[] = {
 		       .coherent_dma_mask = DMA_BIT_MASK(32),
 		       .platform_data = &sw_ohci2,
 		       },
-	       .resource = sw_ohci2_resources,
-	       .num_resources = ARRAY_SIZE(sw_ohci2_resources),
 	       },
 };
 
