@@ -45,6 +45,8 @@
 static struct sw_hci_hcd *g_sw_ohci[3];
 static u32 ohci_first_probe[3] = { 1, 1, 1 };
 
+extern int usb_disabled(void);
+
 static int open_ohci_clock(struct sw_hci_hcd *sw_ohci)
 {
 	return sw_ohci->open_clock(sw_ohci, 1);
@@ -218,6 +220,10 @@ static int sw_ohci_hcd_probe(struct platform_device *pdev)
 
 	if (pdev == NULL)
 		return -EINVAL;
+
+	/* if usb is disabled, can not probe */
+	if (usb_disabled())
+		return -ENODEV;
 
 	sw_ohci = pdev->dev.platform_data;
 	if (!sw_ohci)
