@@ -44,9 +44,6 @@
 #include <linux/dma-mapping.h>
 #include <linux/io.h>
 
-#include <linux/usb.h>
-#include <linux/usb/hcd.h>
-
 #include <asm/byteorder.h>
 #include <asm/irq.h>
 #include <asm/system.h>
