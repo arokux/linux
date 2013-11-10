@@ -593,26 +593,39 @@ int __devinit snd_chip_codec_mixer_new(struct snd_card *card)
 	*/
 	enum sw_ic_ver  codec_chip_ver = sw_get_ic_ver();
 
+	printk("sunxi-codec: looking for an error 21\n");
 	if (codec_chip_ver == SUNXI_VER_A10A) {
 		if (has_playback)
 			for (idx = 0; idx < ARRAY_SIZE(sunxia_dac); idx++)
 				if ((err = snd_ctl_add(card, snd_ctl_new1(&sunxia_dac[idx], clnt))) < 0)
+				{
+					printk("sunxi-codec: looking for an error 22 %d\n", idx);
 					return err;
+				}
 		if (has_capture)
 			for (idx = 0; idx < ARRAY_SIZE(codec_adc_controls); idx++)
 				if ((err = snd_ctl_add(card, snd_ctl_new1(&codec_adc_controls[idx], clnt))) < 0)
+				{
+					printk("sunxi-codec: looking for an error 22 %d\n", idx);
 					return err;
+				}
 	} else if (sunxi_is_sun5i() ||
 		   codec_chip_ver == SUNXI_VER_A10B ||
 		   codec_chip_ver == SUNXI_VER_A10C) {
 		if (has_playback)
 			for (idx = 0; idx < ARRAY_SIZE(sunxibc_dac); idx++)
 				if ((err = snd_ctl_add(card, snd_ctl_new1(&sunxibc_dac[idx], clnt))) < 0)
+				{
+					printk("sunxi-codec: looking for an error 22 %d\n", idx);
 					return err;
+				}
 		if (has_capture)
 			for (idx = 0; idx < ARRAY_SIZE(codec_adc_controls); idx++)
 				if ((err = snd_ctl_add(card, snd_ctl_new1(&codec_adc_controls[idx], clnt))) < 0)
+				{
+					printk("sunxi-codec: looking for an error 22 %d\n", idx);
 					return err;
+				}
 	} else if (sunxi_is_sun7i()) {
 		if (has_playback)
 			for (idx = 0; idx < ARRAY_SIZE(sun7i_dac_ctls); idx++)
@@ -636,6 +649,7 @@ int __devinit snd_chip_codec_mixer_new(struct snd_card *card)
 	*	分配。在这里在snd_card_create分配。
 	*/
 	if ((err = snd_device_new(card, SNDRV_DEV_CODEC, clnt, &ops)) < 0) {
+		printk("sunxi-codec: looking for an error 23\n");
 		return err;
 	}
 
@@ -1460,6 +1474,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 	if (ret != 0) {
 		return -ENOMEM;
 	}
+	printk("sunxi-codec: looking for an error 1\n");
 	/*从private_data中取出分配的内存大小*/
 	chip = card->private_data;
 	/*声卡芯片的专用数据*/
@@ -1473,6 +1488,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 	*/
 	if ((err = snd_chip_codec_mixer_new(card)))
 		goto nodev;
+	printk("sunxi-codec: looking for an error 2\n");
 
 	/*
 	*	PCM,录音放音相关，注册PCM接口
@@ -1485,13 +1501,16 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 	sprintf(card->longname, "sunxi-CODEC  Audio Codec");
 
 	snd_card_set_dev(card, &pdev->dev);
+	printk("sunxi-codec: looking for an error 3\n");
 
 	//注册card
 	if ((err = snd_card_register(card)) == 0) {
 		platform_set_drvdata(pdev, card);
 	}else{
+		printk("sunxi-codec: failed to register card: %d\n", err);
       return err;
 	}
+	printk("sunxi-codec: looking for an error 4\n");
 
 	db = kzalloc(sizeof(*db), GFP_KERNEL);
 	if (!db)
@@ -1501,6 +1520,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 	if (-1 == clk_enable(codec_apbclk)) {
 		printk("codec_apbclk failed; \n");
 	}
+	printk("sunxi-codec: looking for an error 5\n");
 	/* codec_pll2clk */
 	codec_pll2clk = clk_get(NULL,"audio_pll");
 	clk_enable(codec_pll2clk);
@@ -1525,6 +1545,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 		printk("codec insufficient resources\n");
 		goto out;
 	}
+	printk("sunxi-codec: looking for an error 6\n");
 	 /* codec address remap */
 	 db->codec_base_req = request_mem_region(db->codec_base_res->start, 0x40,
 					   pdev->name);
@@ -1540,6 +1561,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 		 dev_err(db->dev,"failed to ioremap codec address reg\n");
 		 goto out;
 	 }
+	printk("sunxi-codec: looking for an error 7\n");
 
 	 kfree(db);
 	 gpio_pa_shutdown = gpio_request_ex("audio_para", "audio_pa_ctrl");
@@ -1554,6 +1576,7 @@ static int __devinit sunxi_codec_probe(struct platform_device *pdev)
 		ret = -ENOMEM;
 		goto err_resume_work_queue;
 	}
+	printk("sunxi-codec: looking for an error 8\n");
 	 return 0;
      err_resume_work_queue:
 	 out:
