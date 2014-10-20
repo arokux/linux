@@ -110,6 +110,20 @@
 				allwinner,drive = <0>;
 				allwinner,pull = <0>;
 			};
+
+			usb0_id_detect_pin: usb0_id_detect_pin@0 {
+				allwinner,pins = "PH19";
+				allwinner,function = "gpio_in";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
+
+			usb0_vbus_detect_pin: usb0_vbus_detect_pin@0 {
+				allwinner,pins = "PH22";
+				allwinner,function = "gpio_in";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
 		};
 
 		pwm: pwm@01c20e00 {
