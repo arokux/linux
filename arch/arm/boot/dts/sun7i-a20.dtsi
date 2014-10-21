@@ -451,6 +451,11 @@
 		#size-cells = <1>;
 		ranges;
 
+		syscon: syscon@01c00000 {
+			compatible = "allwinner,sun4i-a10-syscon", "syscon";
+			reg = <0x01c00004 0x4>;
+		};
+
 		nmi_intc: interrupt-controller@01c00030 {
 			compatible = "allwinner,sun7i-a20-sc-nmi";
 			interrupt-controller;
@@ -542,6 +547,18 @@
 			clocks = <&ahb_gates 11>, <&mmc3_clk>;
 			clock-names = "ahb", "mmc";
 			interrupts = <0 35 4>;
+			status = "disabled";
+		};
+
+		usb_otg: usb@01c13000 {
+			compatible = "allwinner,sun4i-a10-musb";
+			reg = <0x01c13000 0x0400>;
+			clocks = <&ahb_gates 0>;
+			interrupts = <0 38 4>;
+			interrupt-names = "mc";
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			syscons = <&syscon>;
 			status = "disabled";
 		};
 
