@@ -592,6 +592,7 @@ static inline u16 musb_read_rxfifoadd(void __iomem *mbase)
 
 static inline u8 musb_read_ulpi_buscontrol(void __iomem *mbase)
 {
+	return 0;
 }
 
 static inline u8 musb_read_configdata(void __iomem *mbase)

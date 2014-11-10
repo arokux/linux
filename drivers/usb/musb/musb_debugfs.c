@@ -64,7 +64,7 @@ static const struct musb_register_map musb_regmap[] = {
 	{ "IntrTxE",	MUSB_INTRTXE,	16 },
 	{ "IntrUsbE",	MUSB_INTRUSBE,	8 },
 	{ "DevCtl",	MUSB_DEVCTL,	8 },
-	{ "BabbleCtl",	MUSB_BABBLE_CTL,8 },
+//	{ "BabbleCtl",	MUSB_BABBLE_CTL,8 },
 	{ "TxFIFOsz",	MUSB_TXFIFOSZ,	8 },
 	{ "RxFIFOsz",	MUSB_RXFIFOSZ,	8 },
 	{ "TxFIFOadd",	MUSB_TXFIFOADD,	16 },

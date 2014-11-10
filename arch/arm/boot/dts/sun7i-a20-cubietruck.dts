@@ -43,7 +43,7 @@
 			pinctrl-names = "default";
 			pinctrl-0 = <&usb0_id_detect_pin
 				    &usb0_vbus_detect_pin>;
-			dr_mode = "host";
+			dr_mode = "peripheral";
 			id_det-gpios = <&pio 7 19 0>; /* PH19 */
 			vbus_det-gpios = <&pio 7 22 0>; /* PH22 */
 			status = "okay";
